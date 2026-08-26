@@ -98,8 +98,8 @@ function generateStyles() {
     const totalStyles = shuffled.length;
     
     // Mid aur Bottom ke liye limits (dynamic)
-    const midStyleLimit = Math.min(3, Math.floor(totalStyles * 0.5));     // 70 ya 25%
-    const bottomStyleLimit = Math.min(3, Math.floor(totalStyles * 0.5));  // 70 ya 25%
+    const midStyleLimit = Math.min(30, Math.floor(totalStyles * 0.15));     // 70 ya 25%
+    const bottomStyleLimit = Math.min(110, Math.floor(totalStyles * 0.35));  // 70 ya 25%
     const mainStyleLimit = totalStyles - midStyleLimit - bottomStyleLimit;   // Baaki sab main mein
     
     // Alag-alag portions (dynamic - koi duplicate nahi)
