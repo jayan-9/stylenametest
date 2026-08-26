@@ -18,40 +18,73 @@ function convert(name, map) {
     }).join("");
 }
 
+// 💔💔===== GENERATE STYLES (DYNAMIC - NO HARD-CODED LIMITS) =====
 function generateStyles() {
     const name = document.getElementById('nameInput')?.value.trim();
     const result = document.getElementById('result');
     const resultMid = document.getElementById('resultMid');
     const resultBottom = document.getElementById('resultBottom');
+    
     if (!result) return;
 
-    // If input is empty – show examples from HTML
+    // ===== STEP 1: अगर Input EMPTY है – Examples दिखाएं =====
     if (!name) {
         const exampleContainer = document.getElementById('exampleContainer');
         if (exampleContainer) {
             const allExamples = exampleContainer.querySelectorAll('.style-card');
-            const filtered = Array.from(allExamples).filter(el => el.classList.contains(currentFilter));
+            const filtered = Array.from(allExamples).filter(el => 
+                el.classList.contains(currentFilter)
+            );
+            
             if (filtered.length === 0) {
                 result.innerHTML = `<p style="color:#888;text-align:center;padding:20px;">No examples found for "${currentFilter}" category.</p>`;
                 if (resultMid) resultMid.innerHTML = '';
                 if (resultBottom) resultBottom.innerHTML = '';
                 return;
             }
+            
+            // ===== EXAMPLES: DYNAMIC LIMITS =====
             const shuffled = [...filtered].sort(() => Math.random() - 0.5);
-            const mainLimit = Math.min(30, shuffled.length);
-            const midLimit = Math.min(20, Math.max(0, shuffled.length - mainLimit));
-            const bottomLimit = Math.min(20, Math.max(0, shuffled.length - mainLimit - midLimit));
-            const mainExamples = shuffled.slice(0, mainLimit);
-            const midExamples = shuffled.slice(mainLimit, mainLimit + midLimit);
-            const bottomExamples = shuffled.slice(mainLimit + midLimit, mainLimit + midLimit + bottomLimit);
-            result.innerHTML = mainExamples.map(el => el.outerHTML).join('');
-            if (resultMid) resultMid.innerHTML = midExamples.map(el => el.outerHTML).join('');
-            if (resultBottom) resultBottom.innerHTML = bottomExamples.map(el => el.outerHTML).join('');
+            
+            // Har section ke liye percentage ya fixed number
+            const mainExampleLimit = Math.min(30, shuffled.length);  // 30 ya jitne hain
+            const midExampleLimit = Math.min(20, Math.max(0, shuffled.length - mainExampleLimit));  // 20 ya baaki
+            const bottomExampleLimit = Math.min(20, Math.max(0, shuffled.length - mainExampleLimit - midExampleLimit));  // 20 ya baaki
+            
+            // Alag-alag portions (dynamic)
+            const mainExamples = shuffled.slice(0, mainExampleLimit);
+            const midExamples = shuffled.slice(mainExampleLimit, mainExampleLimit + midExampleLimit);
+            const bottomExamples = shuffled.slice(mainExampleLimit + midExampleLimit, mainExampleLimit + midExampleLimit + bottomExampleLimit);
+            
+            // Main Section
+            let html = '';
+            mainExamples.forEach(el => {
+                html += el.outerHTML;
+            });
+            result.innerHTML = html;
+            
+            // Mid Section
+            if (resultMid) {
+                let midHtml = '';
+                midExamples.forEach(el => {
+                    midHtml += el.outerHTML;
+                });
+                resultMid.innerHTML = midHtml;
+            }
+            
+            // Bottom Section
+            if (resultBottom) {
+                let bottomHtml = '';
+                bottomExamples.forEach(el => {
+                    bottomHtml += el.outerHTML;
+                });
+                resultBottom.innerHTML = bottomHtml;
+            }
         }
         return;
     }
 
-    // Input filled – generate styles from data
+    // ===== STEP 2: अगर Input भरा है – Actual Styles Generate करें =====
     const styles = stylesByCategory[currentFilter] || [];
     if (styles.length === 0) {
         result.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>No styles for this category yet.</p></div>`;
@@ -60,43 +93,69 @@ function generateStyles() {
         return;
     }
 
+    // ===== GENERATED STYLES: DYNAMIC LIMITS (300+ ke liye ready) =====
     const shuffled = [...styles].sort(() => Math.random() - 0.5);
-    const total = shuffled.length;
-    const midLimit = Math.min(30, Math.floor(total * 0.15));
-    const bottomLimit = Math.min(110, Math.floor(total * 0.35));
-    const mainLimit = total - midLimit - bottomLimit;
-    const mainStyles = shuffled.slice(0, mainLimit);
-    const midStyles = shuffled.slice(mainLimit, mainLimit + midLimit);
-    const bottomStyles = shuffled.slice(mainLimit + midLimit);
+    const totalStyles = shuffled.length;
+    
+    // Mid aur Bottom ke liye limits (dynamic)
+    const midStyleLimit = Math.min(3, Math.floor(totalStyles * 0.5));     // 70 ya 25%
+    const bottomStyleLimit = Math.min(3, Math.floor(totalStyles * 0.5));  // 70 ya 25%
+    const mainStyleLimit = totalStyles - midStyleLimit - bottomStyleLimit;   // Baaki sab main mein
+    
+    // Alag-alag portions (dynamic - koi duplicate nahi)
+    const mainStyles = shuffled.slice(0, mainStyleLimit);
+    const midStyles = shuffled.slice(mainStyleLimit, mainStyleLimit + midStyleLimit);
+    const bottomStyles = shuffled.slice(mainStyleLimit + midStyleLimit);
 
+    // ===== MAIN SECTION =====
     result.innerHTML = '';
+    
     mainStyles.forEach((style, index) => {
         const styled = style.prefix + convert(name, style.map) + style.suffix;
         const escaped = styled.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        
         const div = document.createElement('div');
         div.className = `style-card ${currentFilter}`;
         div.setAttribute('onclick', `copyText('${escaped}', this)`);
         div.setAttribute('title', 'Click to copy');
         div.innerHTML = `<div class="style-text">${styled}</div>`;
         result.appendChild(div);
-        // Inline links (as in original)
-        if (index === 61) {
-            const linksDiv = document.createElement('div');
-            linksDiv.className = 'style-card';
-            linksDiv.style.padding = '20px';
-            linksDiv.style.background = '#f5f5f5';
-            linksDiv.style.border = '1px solid #ddd';
-            linksDiv.style.borderRadius = '10px';
-            linksDiv.style.cursor = 'default';
-            linksDiv.innerHTML = `
-                <div style="display: flex; flex-direction: column; gap: 12px;">
-                    <a href="anime-stylish-names-collection.html" style="color: #333; text-decoration: none; border-bottom: 1px solid #ccc; padding: 8px 0; display: block; font-size: 1.1rem;">🌀 Anime Names</a>
-                    <a href="pubg-stylish-names-with-symbols.html" style="color: #333; text-decoration: none; border-bottom: 1px solid #ccc; padding: 8px 0; display: block; font-size: 1.1rem;">🎯 PUBG Names</a>
-                    <a href="attitude-names-for-boys.html" style="color: #333; text-decoration: none; border-bottom: 1px solid #ccc; padding: 8px 0; display: block; font-size: 1.1rem;">⚡ Attitude Names</a>
-                </div>
-            `;
-            result.appendChild(linksDiv);
-        }
+        
+      // Links (sirf main section mein)
+if (index === 61) {
+    const linksDiv = document.createElement('div');
+    linksDiv.className = 'style-card';
+    linksDiv.style.padding = '20px';
+    linksDiv.style.background = '#f5f5f5';
+    linksDiv.style.border = '1px solid #ddd';
+    linksDiv.style.borderRadius = '10px';
+    linksDiv.style.cursor = 'default';
+
+    const smartLink = 'https://www.profitableratecpmnetwork.com/jj1g13d6ca?key=b155e721b25d2266279d81f83d350200';
+
+    linksDiv.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+
+            <a href="${smartLink}" target="_blank"
+               style="color: #333; text-decoration: none; border-bottom: 1px solid #ccc; padding: 8px 0; display: block; font-size: 1.1rem;">
+               🌀 Anime Names
+            </a>
+
+            <a href="${smartLink}" target="_blank"
+               style="color: #333; text-decoration: none; border-bottom: 1px solid #ccc; padding: 8px 0; display: block; font-size: 1.1rem;">
+               🎯 PUBG Names
+            </a>
+
+            <a href="${smartLink}" target="_blank"
+               style="color: #333; text-decoration: none; border-bottom: 1px solid #ccc; padding: 8px 0; display: block; font-size: 1.1rem;">
+               ⚡ Stylish Bio
+            </a>
+
+        </div>
+    `;
+
+    result.appendChild(linksDiv);
+}
         if (index === 159) {
             const linksDiv = document.createElement('div');
             linksDiv.className = 'style-card';
@@ -131,11 +190,14 @@ function generateStyles() {
         }
     });
 
+    // ===== MID SECTION: 70 Random Styles (UNIQUE) =====
     if (resultMid) {
         resultMid.innerHTML = '';
+        
         midStyles.forEach((style) => {
             const styled = style.prefix + convert(name, style.map) + style.suffix;
             const escaped = styled.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            
             const div = document.createElement('div');
             div.className = `style-card ${currentFilter}`;
             div.setAttribute('onclick', `copyText('${escaped}', this)`);
@@ -145,11 +207,14 @@ function generateStyles() {
         });
     }
 
+    // ===== BOTTOM SECTION: 70 Random Styles (UNIQUE) =====
     if (resultBottom) {
         resultBottom.innerHTML = '';
+        
         bottomStyles.forEach((style) => {
             const styled = style.prefix + convert(name, style.map) + style.suffix;
             const escaped = styled.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            
             const div = document.createElement('div');
             div.className = `style-card ${currentFilter}`;
             div.setAttribute('onclick', `copyText('${escaped}', this)`);
