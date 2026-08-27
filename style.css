@@ -1190,3 +1190,30 @@ body.dark-theme .seo-summary .word-chip { background: #2d3a4f; color: var(--dark
     body { padding-bottom: 60px; }
     .bio-card { flex: 0 0 200px; font-size: 0.75rem; }
 }
+
+/* Yeh class name change karein */
+.sticky-menu {
+    position: sticky;
+    top: 15px;
+    z-index: 9999;
+    display: inline-block;
+    float: right;
+    margin-right: 20px;
+    transition: all 0.3s ease;
+}
+
+.sticky-menu.scrolled {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    background: rgba(255, 255, 255, 0.5);
+    padding: 8px 14px;
+    border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.dark-theme .sticky-menu.scrolled {
+    background: rgba(20, 20, 30, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
