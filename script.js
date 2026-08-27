@@ -514,7 +514,26 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('themeToggle').innerHTML = '<i class="fas fa-sun"></i>';
         if (document.getElementById('themeStatus')) document.getElementById('themeStatus').textContent = 'Dark';
     }
-    loadNote();
+
+    // ===== STICKY MENU BLUR ON SCROLL =====
+    const stickyMenu = document.querySelector('.sticky-menu');
+    if (stickyMenu) {
+        // Check initial scroll position
+        if (window.scrollY > 100) {
+            stickyMenu.classList.add('scrolled');
+        }
+
+        // Add scroll event listener
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 100) {
+                stickyMenu.classList.add('scrolled');
+            } else {
+                stickyMenu.classList.remove('scrolled');
+            }
+        });
+    }
+
+loadNote();
     document.getElementById('menuToggle')?.addEventListener('click', toggleSidebar);
     document.getElementById('closeSidebar')?.addEventListener('click', closeSidebar);
     document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
