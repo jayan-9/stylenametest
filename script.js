@@ -607,3 +607,17 @@ loadNote();
     loadMiniSuggestions();
     loadTop3Styles();
 });
+
+// ===== CATEGORY BAR STICKY BLUR EFFECT =====
+const categorySection = document.querySelector('.category-section'); // Apne class se match karein
+
+if (categorySection) {
+    window.addEventListener('scroll', function() {
+        // Jab scroll 100px se zyada ho toh 'scrolled' class add karo
+        if (window.scrollY > 100) {
+            categorySection.classList.add('scrolled');
+        } else {
+            categorySection.classList.remove('scrolled');
+        }
+    }, { passive: true });
+}
