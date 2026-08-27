@@ -531,6 +531,47 @@ document.addEventListener('DOMContentLoaded', function() {
                 stickyMenu.classList.remove('scrolled');
             }
         });
+
+        // ===== HAMBURGER STICKY + BLUR ON SCROLL =====
+document.addEventListener('DOMContentLoaded', function() {
+    const menuToggle = document.getElementById('menuToggle');
+    const navMenu = document.getElementById('navMenu');
+    let lastScrollY = window.scrollY;
+
+    // --- Toggle menu on click ---
+    if (menuToggle) {
+        menuToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            this.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+    }
+
+    // --- Close menu when clicking outside ---
+    document.addEventListener('click', function(e) {
+        if (menuToggle && navMenu) {
+            if (!menuToggle.contains(e.target) && !navMenu.contains(e.target)) {
+                menuToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+        }
+    });
+
+    // --- Sticky + Blur effect on scroll ---
+    window.addEventListener('scroll', function() {
+        const currentScrollY = window.scrollY;
+        
+        if (menuToggle) {
+            if (currentScrollY > 50) {
+                menuToggle.classList.add('scrolled');
+            } else {
+                menuToggle.classList.remove('scrolled');
+            }
+        }
+        
+        lastScrollY = currentScrollY;
+    }, { passive: true });
+});
     }
 
 loadNote();
